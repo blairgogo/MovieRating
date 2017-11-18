@@ -1,6 +1,6 @@
 # RBDA-17fall-Movie
 
-Data source: [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data)
+Data source: [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data), [Douban Movie Short Comments](https://www.kaggle.com/utmhikari/doubanmovieshortcomments), MovieLens
 
 ## Dumbo HPC Environment:
 **Java** 1.7.0_79
