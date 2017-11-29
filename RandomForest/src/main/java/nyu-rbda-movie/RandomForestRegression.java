@@ -93,17 +93,17 @@ public class RandomForestRegression {
 
         //System.out.println("Learned regression forest model:\n" + model.toDebugString());
 
+        System.out.println("Summary of the model: " + model.toString());
+
+        //get all the decision trees from the model
+        DecisionTreeModel[] trees = model.trees();
+        System.out.println("The first decision tree in the forest: " + trees[0].toDebugString());
+
         // Save and load
 	    model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
         RandomForestModel sameModel = RandomForestModel.load(jsc.sc(),
 							     "target/tmp/myRandomForestRegressionModel");
         // $example off$
-
-        System.out.println("Summary of the model: " + model.toString());
-
-        //get all the decision trees from the model
-        DecisionTreeModel[] trees = model.trees();
-        System.out.println("The first decisino tree in the forest: " + trees[0].toDebugString());
 
 
         jsc.stop();
