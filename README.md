@@ -26,7 +26,7 @@ Run the DataETL MapReduce code on input data from [Kaggle TMDB 5000](https://www
 Go to folder ./RandomForest/input:
 
 ```language=bash
-hdfs dfs -mkdir hiveInput
+hdfs dfs -mkdir input
 hdfs dfs -mv tmdb_5000_movies.txt input
 ```
 
