@@ -1,5 +1,5 @@
 # RBDA-17fall-Movie
-Predictive analsis for movie ratings.
+Predictive analysis for movie ratings.
 
 ![MovieRating](https://nycdatascience.com/blog/wp-content/uploads/2016/08/Screen-Shot-2016-08-21-at-11.54.05-PM-1200x480.png)
 
