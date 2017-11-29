@@ -52,7 +52,7 @@ public class RandomForestRegression {
         JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD();
 	    
         // Split the data into training and test sets (20% held out for testing)
-        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.8, 0.2});
+        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.9, 0.1});
         JavaRDD<LabeledPoint> trainingData = splits[0];
         JavaRDD<LabeledPoint> testData = splits[1];
 
