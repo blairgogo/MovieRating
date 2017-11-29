@@ -1,6 +1,12 @@
 # RBDA-17fall-Movie
+Predictive analsis for movie ratings.
 
-Data source: [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data), [Douban Movie Short Comments](https://www.kaggle.com/utmhikari/doubanmovieshortcomments), MovieLens
+![MovieRating](https://nycdatascience.com/blog/wp-content/uploads/2016/08/Screen-Shot-2016-08-21-at-11.54.05-PM-1200x480.png)
+
+## Data source
+- [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data)
+- [Douban Movie Short Comments](https://www.kaggle.com/utmhikari/doubanmovieshortcomments)
+- MovieLens
 
 ## Dumbo HPC Environment:
 **Java** 1.7.0_79
