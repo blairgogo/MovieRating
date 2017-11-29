@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.spark.ml.regression.RandomForestRegressionModel;
 
+import org.apache.spark.mllib.linalg.Vector;
+import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import scala.Tuple2;
 
@@ -98,6 +100,11 @@ public class RandomForestRegression {
         //get all the decision trees from the model
         DecisionTreeModel[] trees = model.trees();
         System.out.println("The first decision tree in the forest: " + trees[0].toDebugString());
+
+        //create a movie vector and use model to predict the rating
+        Vector windRiver = Vectors.dense(11000000,21,40100000,111);
+
+        System.out.println("Predictive rating of <Wind River>: " + model.predict(windRiver));
 
         // Save and load
 	    model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
