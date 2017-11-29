@@ -57,7 +57,7 @@ public class RandomForestRegression {
         // Set parameters.
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        int numTrees = 3; // Use more in practice.
+        int numTrees = 4000; // Use more in practice.
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
         String impurity = "variance";
         int maxDepth = 4;
