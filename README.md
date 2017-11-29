@@ -31,11 +31,11 @@ hdfs dfs -mv tmdb_5000_movies.csv hiveInput
 ## Run random forest regression
 
 To create the Maven project package (the project already exists, no need to create new one): 
-> mvn archetype:generate 
+> /opt/maven/bin/mvn archetype:generate 
 
 To build the Maven project, go to folder ./RandomForest: 
 
-> mvn package 
+> /opt/maven/bin/mvn package 
 
 To run the task on Spark, go to folder ./RandomForest/target: 
 
