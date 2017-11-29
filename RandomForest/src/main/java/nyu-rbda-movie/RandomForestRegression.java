@@ -19,6 +19,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.spark.ml.regression.RandomForestRegressionModel;
+
+import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.function.Function2;
@@ -54,7 +57,7 @@ public class RandomForestRegression {
         // Set parameters.
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        int numTrees = 4000; // Use more in practice.
+        int numTrees = 3; // Use more in practice.
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
         String impurity = "variance";
         int maxDepth = 4;
@@ -87,13 +90,21 @@ public class RandomForestRegression {
 		    }) / testData.count();
 
         System.out.println("Test Mean Squared Error: " + testMSE);
-        System.out.println("Learned regression forest model:\n" + model.toDebugString());
+
+        //System.out.println("Learned regression forest model:\n" + model.toDebugString());
 
         // Save and load
-	model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
+	    model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
         RandomForestModel sameModel = RandomForestModel.load(jsc.sc(),
 							     "target/tmp/myRandomForestRegressionModel");
         // $example off$
+
+        System.out.println("Summary of the model: " + model.toString());
+
+        //get all the decision trees from the model
+        DecisionTreeModel[] trees = model.trees();
+        System.out.println("The first decisino tree in the forest: " + trees[0].toDebugString());
+
 
         jsc.stop();
     }
