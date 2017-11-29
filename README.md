@@ -13,6 +13,8 @@ Data source: [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/
 
 ## Load data to HDFS
 
+Go to folder ./RandomForest/input:
+
 ```language=bash
 hdfs dfs -mkdir hiveInput
 hdfs dfs -mv tmdb_5000_movies.csv hiveInput
@@ -22,18 +24,18 @@ hdfs dfs -mv tmdb_5000_movies.csv hiveInput
 
 ## Run random forest regression
 
-To create the Maven project package: 
+To create the Maven project package (the project already exists, no need to create new one): 
 > mvn archetype:generate 
 
-To build the Maven project: 
+To build the Maven project, go to folder ./RandomForest: 
 
 > mvn package 
 
-To run the task on Spark: 
+To run the task on Spark, go to folder ./RandomForest/target: 
 
 > spark-submit --class "RandomForestRegression" rbda-movie-1.0-SNAPSHOT.jar
 
 Remember to put the input TXT file in HDFS under 'input' folder
 
-The input file should be in [LIBSVM](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/) format
+The input file is in [LIBSVM](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/) format
 
