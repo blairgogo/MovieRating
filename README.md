@@ -26,7 +26,9 @@ hdfs dfs -mkdir hiveInput
 hdfs dfs -mv tmdb_5000_movies.csv hiveInput
 ```
 
----
+## Clean and Format Data
+
+Run the DataETL MapReduce code on input data from [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data), the output is in [LIBSVM](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/) format.
 
 ## Run random forest regression
 
@@ -42,6 +44,4 @@ To run the task on Spark, go to folder ./RandomForest/target:
 > spark-submit --class "RandomForestRegression" rbda-movie-1.0-SNAPSHOT.jar
 
 Remember to put the input TXT file in HDFS under 'input' folder
-
-The input file is in [LIBSVM](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/) format
 
