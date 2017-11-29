@@ -52,14 +52,14 @@ public class RandomForestRegression {
         JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD();
 	    
         // Split the data into training and test sets (20% held out for testing)
-        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.9, 0.1});
+        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.8, 0.2});
         JavaRDD<LabeledPoint> trainingData = splits[0];
         JavaRDD<LabeledPoint> testData = splits[1];
 
         // Set parameters.
         // Empty categoricalFeaturesInfo indicates all features are continuous.
         Map<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-        int numTrees = 4000; // Use more in practice.
+        int numTrees = 5000; // Use more in practice.
         String featureSubsetStrategy = "auto"; // Let the algorithm choose.
         String impurity = "variance";
         int maxDepth = 4;
