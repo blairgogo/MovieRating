@@ -16,14 +16,23 @@
  */
 
 // $example on$
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.spark.ml.Pipeline;
+import org.apache.spark.ml.PipelineModel;
+import org.apache.spark.ml.PipelineStage;
+import org.apache.spark.ml.evaluation.RegressionEvaluator;
+import org.apache.spark.ml.feature.VectorIndexer;
+import org.apache.spark.ml.feature.VectorIndexerModel;
 import org.apache.spark.ml.regression.RandomForestRegressionModel;
 
+import org.apache.spark.ml.regression.RandomForestRegressor;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
+import org.apache.spark.sql.DataFrame;
 import scala.Tuple2;
 
 import org.apache.spark.api.java.function.Function2;
@@ -37,20 +46,23 @@ import org.apache.spark.mllib.tree.RandomForest;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.mllib.util.MLUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.sql.SQLContext;
+
 // $example off$
 
 public class RandomForestRegression {
-    public static void main(String[] args) {
+
+    public void randomForestModelTest() {
         // $example on$
-	//run in self-contained mode
+        //run in self-contained mode
         SparkConf sparkConf = new SparkConf().setAppName("JavaRandomForestRegressionExample").setMaster("local[*]");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
-	    
+
         // Load and parse the data file.
         String datapath = "./input/tmdb_5000_movies.txt";
-	    
+
         JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD();
-	    
+
         // Split the data into training and test sets (20% held out for testing)
         JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[]{0.8, 0.2});
         JavaRDD<LabeledPoint> trainingData = splits[0];
@@ -67,18 +79,18 @@ public class RandomForestRegression {
         int seed = 12345;
         // Train a RandomForest model.
         final RandomForestModel model = RandomForest.trainRegressor(trainingData,
-								    categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, seed);
+                categoricalFeaturesInfo, numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, seed);
 
         // Evaluate model on test instances and compute test error
         JavaPairRDD<Double, Double> predictionAndLabel =
-	    testData.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
+                testData.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
                     @Override
                     public Tuple2<Double, Double> call(LabeledPoint p) {
                         return new Tuple2<Double, Double>(model.predict(p.features()), p.label());
                     }
                 });
         Double testMSE =
-	    predictionAndLabel.map(new Function<Tuple2<Double, Double>, Double>() {
+                predictionAndLabel.map(new Function<Tuple2<Double, Double>, Double>() {
                     @Override
                     public Double call(Tuple2<Double, Double> pl) {
                         Double diff = pl._1() - pl._2();
@@ -89,7 +101,7 @@ public class RandomForestRegression {
                     public Double call(Double a, Double b) {
                         return a + b;
                     }
-		    }) / testData.count();
+                }) / testData.count();
 
         System.out.println("Test Mean Squared Error: " + testMSE);
 
@@ -97,22 +109,84 @@ public class RandomForestRegression {
 
         System.out.println("Summary of the model: " + model.toString());
 
+        //get the variable imprtance
+
+
         //get all the decision trees from the model
         DecisionTreeModel[] trees = model.trees();
         System.out.println("The first decision tree in the forest: " + trees[0].toDebugString());
 
         //create a movie vector and use model to predict the rating
-        Vector windRiver = Vectors.dense(11000000,21,40100000,111);
+        Vector windRiver = Vectors.dense(11000000, 21, 40100000, 111);
 
         System.out.println("Predictive rating of <Wind River>: " + model.predict(windRiver));
 
         // Save and load
-	    model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
+        model.save(jsc.sc(), "target/tmp/myRandomForestRegressionModel");
         RandomForestModel sameModel = RandomForestModel.load(jsc.sc(),
-							     "target/tmp/myRandomForestRegressionModel");
+                "target/tmp/myRandomForestRegressionModel");
         // $example off$
 
 
         jsc.stop();
+    }
+
+    public void randomForestRegressionModel() {
+
+        SparkConf conf = new SparkConf().setAppName("JavaRandomForestRegressorExample").setMaster("local[*]");
+        JavaSparkContext jsc = new JavaSparkContext(conf);
+        SQLContext sqlContext = new SQLContext(jsc);
+
+        // Load and parse the data file, converting it to a DataFrame.
+        DataFrame data = sqlContext.read().format("libsvm").load("./input/tmdb_5000_movies.txt");
+
+        // Automatically identify categorical features, and index them.
+        // Set maxCategories so features with > 4 distinct values are treated as continuous.
+        VectorIndexerModel featureIndexer = new VectorIndexer()
+                .setInputCol("features")
+                .setOutputCol("indexedFeatures")
+                .setMaxCategories(4)
+                .fit(data);
+
+        // Split the data into training and test sets (30% held out for testing)
+        DataFrame[] splits = data.randomSplit(new double[]{0.7, 0.3});
+        DataFrame trainingData = splits[0];
+        DataFrame testData = splits[1];
+
+        // Train a RandomForest model.
+        RandomForestRegressor rf = new RandomForestRegressor()
+                .setLabelCol("label")
+                .setFeaturesCol("indexedFeatures");
+
+        // Chain indexer and forest in a Pipeline
+        Pipeline pipeline = new Pipeline()
+                .setStages(new PipelineStage[]{featureIndexer, rf});
+
+        // Train model.  This also runs the indexer.
+        PipelineModel model = pipeline.fit(trainingData);
+
+        // Make predictions.
+        DataFrame predictions = model.transform(testData);
+
+        // Select example rows to display.
+        predictions.select("prediction", "label", "features").show(5);
+
+        // Select (prediction, true label) and compute test error
+        RegressionEvaluator evaluator = new RegressionEvaluator()
+                .setLabelCol("label")
+                .setPredictionCol("prediction")
+                .setMetricName("rmse");
+        double rmse = evaluator.evaluate(predictions);
+        System.out.println("Root Mean Squared Error (RMSE) on test data = " + rmse);
+
+        RandomForestRegressionModel rfModel = (RandomForestRegressionModel) (model.stages()[1]);
+        System.out.println("Learned regression forest model:\n" + rfModel.toDebugString());
+    }
+
+    public static void main(String[] args) {
+
+        RandomForestRegression test = new RandomForestRegression();
+        test.randomForestRegressionModel();
+
     }
 }
