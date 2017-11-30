@@ -180,7 +180,14 @@ public class RandomForestRegression {
         System.out.println("Root Mean Squared Error (RMSE) on test data = " + rmse);
 
         RandomForestRegressionModel rfModel = (RandomForestRegressionModel) (model.stages()[1]);
-        System.out.println("Learned regression forest model:\n" + rfModel.toDebugString());
+
+        System.out.println("Learned regression forest model:\n" + rfModel.toString());
+
+        //get the variable importance from the model
+        Vector importances = rfModel.featureImportances();
+        System.out.println("The imprtance of each feature: " + importances.toString());
+
+
     }
 
     public static void main(String[] args) {
