@@ -184,8 +184,13 @@ public class RandomForestRegression {
         System.out.println("Learned regression forest model:\n" + rfModel.toString());
 
         //get the variable importance from the model
-        Vector importances = rfModel.featureImportances();
-        System.out.println("The imprtance of each feature: " + importances.toString());
+        double[] importances = rfModel.featureImportances().toArray();
+        System.out.println("===================The importance of each feature===================");
+
+        System.out.println("Budget: " + importances[0]);
+        System.out.println("IMDB popularity: " + importances[1]);
+        System.out.println("Revenue: " + importances[2]);
+        System.out.println("Duration: " + importances[3]);
 
 
     }
