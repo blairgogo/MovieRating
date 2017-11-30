@@ -6,7 +6,7 @@ Predictive analysis for movie ratings.
 ## Data source
 - [Kaggle TMDB 5000](https://www.kaggle.com/tmdb/tmdb-movie-metadata/data)
 - [Douban Movie Short Comments](https://www.kaggle.com/utmhikari/doubanmovieshortcomments)
-- MovieLens
+- [Data World IMDB 5000](https://data.world/popculture/imdb-5000-movie-dataset)
 
 ## Dumbo HPC Environment:
 **Java** 1.7.0_79
